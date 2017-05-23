@@ -57,11 +57,13 @@ function ProcessList({ processes }: ProcessListProps) {
     return (
         <table className="table">
             <thead>
-                <th><abbr title="Process Identifier">PID</abbr></th>
-                <th>Command</th>
-                <th>CPU %</th>
-                <th>Memory %</th>
-                <th>Owner</th>
+                <tr>
+                    <th><abbr title="Process Identifier">PID</abbr></th>
+                    <th>Command</th>
+                    <th>CPU %</th>
+                    <th>Memory %</th>
+                    <th>Owner</th>
+                </tr>
             </thead>
             <tbody>
                 {rows}
