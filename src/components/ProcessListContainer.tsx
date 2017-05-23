@@ -4,13 +4,16 @@ import { Process } from '../model';
 
 const API_BASE = process.env.API_BASE || '/api';
 const PROCESS_ENDPOINT = urljoin(API_BASE, '/processes');
+const UPDATE_DELAY = 500;
 
 type Props = {};
 type State = {
-    processes: Process[],
+    processes: Process[]
 };
 
 export class ProcessListContainer extends React.Component<Props, State> {
+    private timeoutId: number = -1;
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -20,7 +23,16 @@ export class ProcessListContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.update();
+        const doUpdate = (() => {
+            this.update().then(() => {
+                this.timeoutId = setTimeout(doUpdate, UPDATE_DELAY);
+            });
+        }).bind(this);
+        doUpdate();
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.timeoutId);
     }
 
     render() {
@@ -38,7 +50,7 @@ export class ProcessListContainer extends React.Component<Props, State> {
             }
         };
 
-        fetch(PROCESS_ENDPOINT, init)
+        return fetch(PROCESS_ENDPOINT, init)
             .then(data => data.json())
             .then(response => {
                 this.setState({ processes: response.result });
